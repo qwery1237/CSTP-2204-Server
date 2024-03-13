@@ -10,11 +10,11 @@ import jwt from "jsonwebtoken"
         next();
     }catch(err){
         
-        return res.status(201).json({success: false})
+        return res.status(201).json({success: false, reason: "invalid token"})
     }
     } else {
         
-        return res.status(201).json({success: false})
+        return res.status(201).json({success: false,reason: "invalid token"})
     }
 }
 export default validateToken

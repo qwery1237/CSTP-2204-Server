@@ -1,42 +1,42 @@
-import authModel from '../model/auth.js';
-import userModel from '../model/user.js';
-import nodemailer from 'nodemailer';
-import dotenv from 'dotenv';
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
+import authModel from "../model/auth.js";
+import userModel from "../model/user.js";
+import nodemailer from "nodemailer";
+import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
 
 dotenv.config();
 
 const emailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
 async function formatVerification(email, password) {
-  if (email === '') {
+  if (email === "") {
     return {
-      error: 'Email address field is empty',
+      error: "Email address field is empty",
       success: false,
-      fault: 'email',
+      fault: "email",
     };
   }
   if (!emailFormat.test(email)) {
     return {
-      error: 'Invalid email address',
+      error: "Invalid email address",
       success: false,
-      fault: 'email',
+      fault: "email",
     };
   }
 
-  if (password === '') {
+  if (password === "") {
     return {
-      error: 'Password field is empty',
+      error: "Password field is empty",
       success: false,
-      fault: 'password',
+      fault: "password",
     };
   }
   if (password.length < 6) {
     return {
-      error: 'Password must be 6 or more characters long',
+      error: "Password must be 6 or more characters long",
       success: false,
-      fault: 'password',
+      fault: "password",
     };
   }
   // If all verifications pass
@@ -51,7 +51,7 @@ const addUserData = async (req, res) => {
   if (trimmedStr.length < 3) {
     return res
       .status(202)
-      .json({ success: false, error: 'Name must be 3 or more character long' });
+      .json({ success: false, error: "Name must be 3 or more character long" });
   }
   try {
     let foundUser = await authModel.findOne({ email: email });
@@ -65,7 +65,7 @@ const addUserData = async (req, res) => {
       await newUser.save();
       foundUser.isInitAuthComplete = true;
       await foundUser.save();
-      const info = { email: foundUser.email };
+      const info = {  email: foundUser.email };
       const token = jwt.sign(info, process.env.TOKEN_SECRET);
       return res.status(201).json({
         success: true,
@@ -73,15 +73,15 @@ const addUserData = async (req, res) => {
       });
     }
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
     return res
       .status(500)
-      .json({ success: false, error: 'Internal Server Error' });
+      .json({ success: false, error: "Internal Server Error" });
   }
 };
 
 const emailSignUp = async (req, res) => {
-  const { email, password, isAgreedToTerms } = req.body;
+  const { email, password,isAgreedToTerms } = req.body;
   const verificationResult = await formatVerification(email, password);
 
   if (!verificationResult.success) {
@@ -96,53 +96,53 @@ const emailSignUp = async (req, res) => {
 
     if (foundUser) {
       if (foundUser.authType) {
-        if (foundUser.authType !== 'email') {
+        if (foundUser.authType !== "email") {
           return res.status(201).json({
             error: `Email address is already linked to ${foundUser.authType} account`,
             success: false,
-            fault: 'none',
+            fault: "none",
           });
         }
       }
       if (foundUser.isInitAuthComplete === true) {
         return res.status(201).json({
-          error: 'Email address is already linked to an account',
+          error: "Email address is already linked to an account",
           success: false,
-          fault: 'none',
+          fault: "none",
         });
       } else {
         foundUser.password = encryptPassword;
         foundUser.otp = otpCode;
         foundUser.isOtpValid = true;
-
+   
         foundUser.otpTimeStamp = currentTimestamp;
         foundUser.isOtpIncorrect = 0;
         await foundUser.save();
-        sendEmail(email, 'FuelGo OTP', otpCode);
+        sendEmail(email, "FuelGo OTP", otpCode);
         return res.status(202).json({ success: true });
       }
     } else {
       const newUser = new authModel({
         email: email,
         password: encryptPassword,
-        authType: 'email',
+        authType: "email",
         otp: otpCode,
         isOtpValid: true,
-        isAgreedToTerms: isAgreedToTerms,
+        isAgreedToTerms:isAgreedToTerms,
         otpTimeStamp: currentTimestamp,
         isOtpIncorrect: 0,
         isInitAuthComplete: false,
       });
 
       await newUser.save();
-      sendEmail(email, 'FuelGo OTP', otpCode);
+      sendEmail(email, "FuelGo OTP", otpCode);
       return res.status(202).json({ success: true });
     }
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
     return res
       .status(500)
-      .json({ success: false, error: 'Internal Server Error' });
+      .json({ success: false, error: "Internal Server Error" });
   }
 };
 
@@ -157,11 +157,11 @@ const emailLogIn = async (req, res) => {
 
     if (foundUser) {
       if (foundUser.authType) {
-        if (foundUser.authType !== 'email') {
+        if (foundUser.authType !== "email") {
           return res.status(201).json({
             error: `Email address is already linked to ${foundUser.authType} account`,
             success: false,
-            fault: 'none',
+            fault: "none",
           });
         }
       }
@@ -171,7 +171,7 @@ const emailLogIn = async (req, res) => {
           foundUser.password
         );
         if (matchPassword) {
-          const info = { email: foundUser.email };
+          const info = {email: foundUser.email };
           const token = jwt.sign(info, process.env.TOKEN_SECRET);
           return res.status(201).json({
             success: true,
@@ -179,56 +179,56 @@ const emailLogIn = async (req, res) => {
           });
         } else {
           return res.status(201).json({
-            error: 'Wrong email or password',
+            error: "Wrong email or password",
             success: false,
-            fault: 'none',
+            fault: "none",
           });
         }
       } else {
         return res.status(201).json({
-          error: 'Wrong email or password',
+          error: "Wrong email or password",
           success: false,
-          fault: 'none',
+          fault: "none",
         });
       }
     } else {
       return res.status(201).json({
-        error: 'Account with this email does not exist',
+        error: "Account with this email does not exist",
         success: false,
-        fault: 'none',
+        fault: "none",
       });
     }
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
     return res
       .status(500)
-      .json({ success: false, error: 'Internal Server Error' });
+      .json({ success: false, error: "Internal Server Error" });
   }
 };
 const Oauth = async (req, res) => {
   const { email } = req.body;
-
+ 
   try {
     let foundUser = await authModel.findOne({ email: email });
 
     if (foundUser) {
       if (foundUser.authType) {
-        if (foundUser.authType === 'email') {
+        if (foundUser.authType === "email") {
           return res.status(201).json({
             error: `Email address is already linked to ${foundUser.authType} account`,
             success: false,
-            fault: 'none',
+            fault: "none",
           });
         }
       }
-      if (foundUser.isInitAuthComplete === true) {
-        const info = { email: foundUser.email };
-        const token = jwt.sign(info, process.env.TOKEN_SECRET);
-        return res.status(201).json({
-          success: true,
-          token: token,
-          stageTwo: false,
-        });
+      if (foundUser.isInitAuthComplete === true) {      
+          const info = {email: foundUser.email };
+          const token = jwt.sign(info, process.env.TOKEN_SECRET);
+          return res.status(201).json({
+            success: true,
+            token: token,
+            stageTwo: false,
+          });
       } else {
         return res.status(201).json({
           success: true,
@@ -238,7 +238,7 @@ const Oauth = async (req, res) => {
     } else {
       const newUser = new authModel({
         email: email,
-        authType: 'Google',
+        authType: "Google",
         isInitAuthComplete: false,
         isAgreedToTerms: true,
       });
@@ -249,10 +249,10 @@ const Oauth = async (req, res) => {
       });
     }
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
     return res
       .status(500)
-      .json({ success: false, error: 'Internal Server Error' });
+      .json({ success: false, error: "Internal Server Error" });
   }
 };
 
@@ -271,22 +271,25 @@ const otpResend = async (req, res) => {
       foundUser.otpTimeStamp = currentTimestamp;
       foundUser.isOtpIncorrect = 0;
       await foundUser.save();
-      sendEmail(email, 'FuelGo OTP', otpCode);
+      sendEmail(email, "FuelGo OTP", otpCode);
       return res.status(202).json({ success: true });
     }
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
     return res
       .status(500)
-      .json({ success: false, error: 'Internal Server Error' });
+      .json({ success: false, error: "Internal Server Error" });
   }
 };
 const otpValidation = async (req, res) => {
+  
   const { email, otp } = req.body;
-  if (otp === '') {
-    return res.status(201).json({ success: false, error: 'Invalid Code' });
+  if(otp === ""){
+    return res
+    .status(201)
+    .json({ success: false, error: "Invalid Code" });
   }
-
+ 
   const currentTimestamp = Date.now();
   try {
     let foundUser = await authModel.findOne({ email: email });
@@ -314,14 +317,14 @@ const otpValidation = async (req, res) => {
               await foundUser.save();
               return res
                 .status(201)
-                .json({ success: false, error: 'Invalid Code' });
+                .json({ success: false, error: "Invalid Code" });
             }
           } else {
             foundUser.isOtpValid = false;
             await foundUser.save();
             return res.status(201).json({
               success: false,
-              error: 'Code expired after multiple failed entries',
+              error: "Code expired after multiple failed entries",
             });
           }
         } else {
@@ -329,34 +332,34 @@ const otpValidation = async (req, res) => {
           await foundUser.save();
           return res
             .status(201)
-            .json({ success: false, error: 'Invalid or expired Code' });
+            .json({ success: false, error: "Invalid or expired Code" });
         }
       } else {
         return res
           .status(201)
-          .json({ success: false, error: 'Invalid or expired Code' });
+          .json({ success: false, error: "Invalid or expired Code" });
       }
     }
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
     return res
       .status(500)
-      .json({ success: false, error: 'Internal Server Error' });
+      .json({ success: false, error: "Internal Server Error" });
   }
 };
 
 const forgetPassword = async (req, res) => {
   const { email } = req.body;
 
-  if (email === '') {
+  if (email === "") {
     return res.status(200).json({
-      error: 'Email address field is empty',
+      error: "Email address field is empty",
       success: false,
     });
   }
   if (!emailFormat.test(email)) {
     return res.status(200).json({
-      error: 'Invalid email address',
+      error: "Invalid email address",
       success: false,
     });
   }
@@ -365,11 +368,11 @@ const forgetPassword = async (req, res) => {
 
     if (foundUser) {
       if (foundUser.authType) {
-        if (foundUser.authType !== 'email') {
+        if (foundUser.authType !== "email") {
           return res.status(201).json({
             error: `Email address is already linked to ${foundUser.authType} account`,
             success: false,
-            fault: 'none',
+            fault: "none",
           });
         }
       }
@@ -382,33 +385,34 @@ const forgetPassword = async (req, res) => {
         const token = jwt.sign(info, process.env.TOKEN_SECRET);
         sendChangePasswordLink(
           email,
-          'FuelGo change password',
-          'http://localhost:5173/changepassword/' + token
+          "FuelGo change password",
+          "http://localhost:5173/changepassword/" + token
         );
         return res.status(200).json({
           success: true,
         });
       } else {
         return res.status(200).json({
-          error: 'Account with this email does not exist',
+          error: "Account with this email does not exist",
           success: false,
         });
       }
     } else {
       return res.status(200).json({
-        error: 'Account with this email does not exist',
+        error: "Account with this email does not exist",
         success: false,
       });
     }
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
     return res
       .status(500)
-      .json({ success: false, error: 'Internal Server Error' });
+      .json({ success: false, error: "Internal Server Error" });
   }
 };
 
 async function changePasswordParamVerification(req, res) {
+  
   try {
     const { id } = req.body;
     const data = jwt.verify(id, process.env.TOKEN_SECRET);
@@ -422,6 +426,7 @@ async function changePasswordParamVerification(req, res) {
           success: true,
         });
       } else {
+      
         return res.status(200).json({
           success: false,
         });
@@ -432,83 +437,83 @@ async function changePasswordParamVerification(req, res) {
       });
     }
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
     return res
       .status(500)
-      .json({ success: false, error: 'Internal Server Error' });
+      .json({ success: false, error: "Internal Server Error" });
   }
 }
-async function changePassword(req, res) {
+async function changePassword(req, res){
   try {
-    const { id, password, confirmPassword } = req.body;
+    const { id,password, confirmPassword } = req.body;
     const data = jwt.verify(id, process.env.TOKEN_SECRET);
     const { timeStamp, email } = data;
     let foundUser = await authModel.findOne({ email: email });
-
+   
     if (foundUser) {
       const currentTimestamp = Date.now();
       if (isNextTimestampWithin30Minutes(currentTimestamp, timeStamp)) {
-        if (password === '') {
+        if (password === "") {
           return res.status(200).json({
-            error: 'Password field is empty',
+            error: "Password field is empty",
             success: false,
-            fault: 'password',
+            fault: "password",
           });
         }
         if (password.length < 6) {
           return res.status(200).json({
-            error: 'Password must be 6 or more characters long',
+            error: "Password must be 6 or more characters long",
             success: false,
-            fault: 'password',
+            fault: "password",
           });
         }
-        if (confirmPassword === '') {
-          return res.status(200).json({
-            error: 'Confirm password field is empty',
-            success: false,
-            fault: 'confirmpassword',
-          });
-        }
-        if (confirmPassword.length < 6) {
-          return res.status(200).json({
-            error: 'Confirm password must be 6 or more characters long',
-            success: false,
-            fault: 'confirmpassword',
-          });
-        }
-        if (confirmPassword !== password) {
-          return res.status(200).json({
-            error: 'Confirm password does not match with password',
-            success: false,
-            fault: 'confirmpassword',
-          });
-        }
+          if (confirmPassword === "") {
+            return res.status(200).json({
+              error: "Confirm password field is empty",
+              success: false,
+              fault: "confirmpassword",
+            });
+          }
+          if (confirmPassword.length < 6) {
+            return res.status(200).json({
+              error: "Confirm password must be 6 or more characters long",
+              success: false,
+              fault: "confirmpassword",
+            });
+          }
+          if (confirmPassword !== password) {
+            return res.status(200).json({
+              error: "Confirm password does not match with password",
+              success: false,
+              fault: "confirmpassword",
+            });
+          }
         const encryptPassword = await bcrypt.hash(password, 10);
         foundUser.password = encryptPassword;
         await foundUser.save();
-        const info = { email: email };
+        const info = {  email: email };
         const token = jwt.sign(info, process.env.TOKEN_SECRET);
         return res.status(200).json({
           success: true,
-          token: token,
+          token: token
         });
       } else {
         return res.status(200).json({
           success: false,
-          fault: 'badlink',
+          fault: "badlink"
         });
       }
     } else {
       return res.status(200).json({
         success: false,
-        fault: 'badlink',
+        fault: "badlink"
       });
     }
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
     return res
       .status(500)
-      .json({ success: false, error: 'Internal Server Error' });
+      .json({ success: false, error: "Internal Server Error" });
   }
 }
 
@@ -525,12 +530,12 @@ function isNextTimestampWithin30Minutes(currentTimestamp, prevTimestamp) {
 function generateRandom4DigitNumber() {
   const randomNumber = Math.floor(Math.random() * 10000);
 
-  const fourDigitNumber = randomNumber.toString().padStart(4, '0');
+  const fourDigitNumber = randomNumber.toString().padStart(4, "0");
 
   return fourDigitNumber;
 }
 const transporter = nodemailer.createTransport({
-  service: 'Gmail',
+  service: "Gmail",
   port: 465,
   secure: true,
   auth: {
@@ -593,9 +598,9 @@ function sendChangePasswordLink(toEmail, subject, message) {
 
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
-      console.error('Error sending email:', error);
+      console.error("Error sending email:", error);
     } else {
-      console.log('Email sent:', info.response);
+      console.log("Email sent:", info.response);
     }
   });
 }
@@ -652,9 +657,9 @@ function sendEmail(toEmail, subject, message) {
 
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
-      console.error('Error sending email:', error);
+      console.error("Error sending email:", error);
     } else {
-      console.log('Email sent:', info.response);
+      console.log("Email sent:", info.response);
     }
   });
 }

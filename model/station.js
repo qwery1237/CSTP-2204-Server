@@ -30,7 +30,7 @@ const stationSchema = new mongoose.Schema({
       price: {
         type: Number,
         default: 0,
-        required : true,
+        required: true,
       },
       timeStamp: {
         type: Number,
@@ -43,7 +43,7 @@ const stationSchema = new mongoose.Schema({
       price: {
         type: Number,
         default: 0,
-        required : true,
+        required: true,
       },
       timeStamp: {
         type: Number,
@@ -56,7 +56,7 @@ const stationSchema = new mongoose.Schema({
       price: {
         type: Number,
         default: 0,
-        required : true,
+        required: true,
       },
       timeStamp: {
         type: Number,
@@ -69,7 +69,7 @@ const stationSchema = new mongoose.Schema({
       price: {
         type: Number,
         default: 0,
-        required : true,
+        required: true,
       },
       timeStamp: {
         type: Number,
@@ -135,25 +135,50 @@ const stationSchema = new mongoose.Schema({
         type: Number,
       },
     },
-   
   },
-  
+
   fuelGoRating: {
-    rating:{
-        type : Number,
-        default: 0,
-        required : true,
+    rating: {
+      type: Number,
+      default: 0,
+      required: true,
     },
-    totalRating:{
-        type: Number,
-        default: 0,
-        required : true,
-    }
+    totalRating: {
+      type: Number,
+      default: 0,
+      required: true,
+    },
   },
   placeId: {
-    type: String
-  }
-
+    type: String,
+  },
+  reviews: [
+    {
+      rating: {
+        type: Number,
+      },
+      comment: {
+        type: String,
+      },
+      timeStamp: {
+        type: Number,
+      },
+      photosVideos: [
+        {
+          link: {
+            type: String,
+          },
+          isPhoto: {
+            type: Boolean,
+          },
+        },
+      ],
+      email: {
+        type: String,
+      },
+    },
+  ],
+ 
 });
 
 stationSchema.index({ location: "2dsphere" });

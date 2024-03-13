@@ -11,7 +11,12 @@ const userSchema = {
       profileImg : {
         type: String ,
         required: true,
-      }
+      },
+      favourite: [
+        {
+          type: String,
+        },
+      ],
      
 }
 
