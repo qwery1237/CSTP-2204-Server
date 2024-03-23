@@ -25,17 +25,35 @@ const stationSchema = new mongoose.Schema({
   address: {
     type: String,
   },
+  priceHistory: [
+    {
+      email: {
+        type: String,
+      },
+      name: {
+        type: String,
+      },
+      timeStamp: {
+        type: Number,
+      },
+      points: {
+        type: Number,
+      },
+    },
+  ],
   price: {
     regular: {
       price: {
         type: Number,
         default: 0,
-        required: true,
       },
       timeStamp: {
         type: Number,
       },
       email: {
+        type: String,
+      },
+      name: {
         type: String,
       },
     },
@@ -43,12 +61,14 @@ const stationSchema = new mongoose.Schema({
       price: {
         type: Number,
         default: 0,
-        required: true,
       },
       timeStamp: {
         type: Number,
       },
       email: {
+        type: String,
+      },
+      name: {
         type: String,
       },
     },
@@ -56,7 +76,6 @@ const stationSchema = new mongoose.Schema({
       price: {
         type: Number,
         default: 0,
-        required: true,
       },
       timeStamp: {
         type: Number,
@@ -64,17 +83,22 @@ const stationSchema = new mongoose.Schema({
       email: {
         type: String,
       },
+      name: {
+        type: String,
+      },
     },
     diesel: {
       price: {
         type: Number,
         default: 0,
-        required: true,
       },
       timeStamp: {
         type: Number,
       },
       email: {
+        type: String,
+      },
+      name: {
         type: String,
       },
     },
@@ -84,59 +108,48 @@ const stationSchema = new mongoose.Schema({
       isValid: {
         type: Boolean,
       },
-      valid: {
-        type: Number,
-      },
-      notValid: {
-        type: Number,
+      name: {
+        default: "Car wash",
+        type: String,
       },
     },
     atm: {
       isValid: {
         type: Boolean,
       },
-      valid: {
-        type: Number,
-      },
-      notValid: {
-        type: Number,
+      name: {
+        default: "ATM",
+        type: String,
       },
     },
     airPump: {
       isValid: {
         type: Boolean,
       },
-      valid: {
-        type: Number,
-      },
-      notValid: {
-        type: Number,
+      name: {
+        default: "Air pump",
+        type: String,
       },
     },
     convenienceStore: {
       isValid: {
         type: Boolean,
       },
-      valid: {
-        type: Number,
-      },
-      notValid: {
-        type: Number,
+      name: {
+        default: "Convenience store",
+        type: String,
       },
     },
     evChargingStation: {
       isValid: {
         type: Boolean,
       },
-      valid: {
-        type: Number,
-      },
-      notValid: {
-        type: Number,
+      name: {
+        default: "Ev charging station",
+        type: String,
       },
     },
   },
-
   fuelGoRating: {
     rating: {
       type: Number,
@@ -165,20 +178,19 @@ const stationSchema = new mongoose.Schema({
       },
       photosVideos: [
         {
-          link: {
-            type: String,
-          },
-          isPhoto: {
-            type: Boolean,
-          },
+          type: String,
         },
       ],
       email: {
         type: String,
       },
+      likes: [
+        {
+          type: String,
+        },
+      ],
     },
   ],
- 
 });
 
 stationSchema.index({ location: "2dsphere" });
