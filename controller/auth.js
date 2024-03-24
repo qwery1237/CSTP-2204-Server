@@ -385,7 +385,7 @@ const otpValidation = async (req, res) => {
 };
 
 const forgetPassword = async (req, res) => {
-  const { email, serverLink } = req.body;
+  const { email, baseUrl } = req.body;
 
   if (email === '') {
     return res.status(200).json({
@@ -422,7 +422,7 @@ const forgetPassword = async (req, res) => {
         sendChangePasswordLink(
           email,
           'FuelGo change password',
-          serverLink + '/accounts/changepassword/' + token
+          baseUrl + '/accounts/changepassword/' + token
         );
         return res.status(200).json({
           success: true,
