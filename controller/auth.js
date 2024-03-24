@@ -385,7 +385,7 @@ const otpValidation = async (req, res) => {
 };
 
 const forgetPassword = async (req, res) => {
-  const { email, baseUrl } = req.body;
+  const { email } = req.body;
 
   if (email === '') {
     return res.status(200).json({
@@ -422,7 +422,8 @@ const forgetPassword = async (req, res) => {
         sendChangePasswordLink(
           email,
           'FuelGo change password',
-          baseUrl + '/accounts/changepassword/' + token
+          'https://cstp-2204-jin-harinder.netlify.app/accounts/changepassword/' +
+            token
         );
         return res.status(200).json({
           success: true,
