@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 const userSchema = new mongoose.Schema({
   email: {
     type: String,
@@ -36,6 +36,9 @@ const userSchema = new mongoose.Schema({
       pointsAmount: {
         type: Number,
       },
+      pointsLeft: {
+        type: Number,
+      },
     },
   ],
   framesOwned: [
@@ -54,6 +57,6 @@ const userSchema = new mongoose.Schema({
   chat: [{ type: String }],
 });
 
-const userModel = mongoose.model("User", userSchema);
+const userModel = mongoose.model('User', userSchema);
 
 export default userModel;

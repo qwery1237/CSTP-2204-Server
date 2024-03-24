@@ -1,12 +1,12 @@
-import userModel from "../model/user.js";
-import stationModel from "../model/station.js";
-import avatarModel from "../model/avatar.js";
-import frameModel from "../model/frame.js";
-import dotenv from "dotenv";
-import axios from "axios";
-import nodemailer from "nodemailer";
-import jwt from "jsonwebtoken";
-import chatModel from "../model/chat.js";
+import userModel from '../model/user.js';
+import stationModel from '../model/station.js';
+import avatarModel from '../model/avatar.js';
+import frameModel from '../model/frame.js';
+import dotenv from 'dotenv';
+import axios from 'axios';
+import nodemailer from 'nodemailer';
+import jwt from 'jsonwebtoken';
+import chatModel from '../model/chat.js';
 
 dotenv.config();
 const sendUserData = async (req, res) => {
@@ -44,7 +44,7 @@ async function getGasStations(req, res) {
     } else {
       try {
         let imageLink =
-          "https://th.bing.com/th/id/R.525e321d9bb82204216f813ee99339ff?rik=O7dfJF5hfrK0Kg&pid=ImgRaw&r=0";
+          'https://th.bing.com/th/id/R.525e321d9bb82204216f813ee99339ff?rik=O7dfJF5hfrK0Kg&pid=ImgRaw&r=0';
         if (station.photos) {
           const photoRef = station.photos[0].photo_reference;
 
@@ -75,29 +75,29 @@ async function getGasStations(req, res) {
         newStation.amenities.convenienceStore.isValid = false;
         newStation.amenities.evChargingStation.isValid = false;
 
-        if (station.types.includes("atm")) {
+        if (station.types.includes('atm')) {
           newStation.amenities.atm.isValid = true;
         }
-        if (station.types.includes("convenience_store")) {
+        if (station.types.includes('convenience_store')) {
           newStation.amenities.convenienceStore.isValid = true;
         }
-        if (station.types.includes("car_wash")) {
+        if (station.types.includes('car_wash')) {
           newStation.amenities.carWash.isValid = true;
         }
-        if (station.types.includes("car_repair")) {
+        if (station.types.includes('car_repair')) {
           newStation.amenities.airPump.isValid = true;
         }
-        if (station.types.includes("electric_vehicle_station")) {
+        if (station.types.includes('electric_vehicle_station')) {
           newStation.amenities.evChargingStation.isValid = true;
         }
 
         newStation.location = {
-          type: "Point",
+          type: 'Point',
           coordinates: [stationLng, stationLat],
         };
         await newStation.save();
       } catch (error) {
-        console.error("Axios error:", error);
+        console.error('Axios error:', error);
       }
     }
   });
@@ -107,10 +107,10 @@ async function getGasStations(req, res) {
       {
         $geoNear: {
           near: {
-            type: "Point",
+            type: 'Point',
             coordinates: [longitude, latitude],
           },
-          distanceField: "dist.calculated",
+          distanceField: 'dist.calculated',
 
           maxDistance: 10000,
 
@@ -144,11 +144,11 @@ async function getGasStation(latitude, longitude) {
     {
       $geoNear: {
         near: {
-          type: "Point",
+          type: 'Point',
           coordinates: [longitude, latitude],
         },
 
-        distanceField: "distance",
+        distanceField: 'distance',
 
         maxDistance: 10,
         spherical: true,
@@ -178,7 +178,7 @@ const getGasStationData = async (req, res) => {
       });
     }
   } catch (error) {
-    console.error("Error:", error);
+    console.error('Error:', error);
     return res.status(201).json({
       success: false,
     });
@@ -202,13 +202,11 @@ const addComment = async (req, res) => {
 
       await foundStation.save();
 
-      return res
-        .status(201)
-        .json({
-          success: true,
-          data: foundStation.reviews,
-          currentTimestamp: currentTimestamp,
-        });
+      return res.status(201).json({
+        success: true,
+        data: foundStation.reviews,
+        currentTimestamp: currentTimestamp,
+      });
     } else {
       return res.status(201).json({ success: false });
     }
@@ -232,13 +230,11 @@ const editComment = async (req, res) => {
 
       await foundStation.save();
 
-      return res
-        .status(201)
-        .json({
-          success: true,
-          data: foundStation.reviews,
-          currentTimestamp: currentTimestamp,
-        });
+      return res.status(201).json({
+        success: true,
+        data: foundStation.reviews,
+        currentTimestamp: currentTimestamp,
+      });
     } else {
       return res.status(201).json({ success: false });
     }
@@ -272,7 +268,7 @@ const deleteComment = async (req, res) => {
         return res.status(201).json({ success: false });
       }
     } catch (error) {
-      console.error("Error:", error);
+      console.error('Error:', error);
       return res.status(201).json({ success: false });
     }
   }
@@ -305,7 +301,7 @@ const likeComment = async (req, res) => {
         return res.status(201).json({ success: false });
       }
     } catch (error) {
-      console.error("Error:", error);
+      console.error('Error:', error);
       return res.status(201).json({ success: false });
     }
   }
@@ -339,7 +335,7 @@ const unLikeComment = async (req, res) => {
         return res.status(201).json({ success: false });
       }
     } catch (error) {
-      console.error("Error:", error);
+      console.error('Error:', error);
       return res.status(201).json({ success: false });
     }
   }
@@ -359,24 +355,24 @@ const addFavourite = async (req, res) => {
         return res.status(201).json({
           success: true,
           data: foundUser.favourite,
-          message: "Added to favourites successfully.",
+          message: 'Added to favourites successfully.',
         });
       } else {
         return res.status(201).json({
           success: false,
-          message: "Item already exists in favourites.",
+          message: 'Item already exists in favourites.',
         });
       }
     } else {
       return res
         .status(201)
-        .json({ success: false, message: "Station not found." });
+        .json({ success: false, message: 'Station not found.' });
     }
   } catch (error) {
-    console.error("Error:", error);
+    console.error('Error:', error);
     return res
       .status(201)
-      .json({ success: false, message: "Internal server error." });
+      .json({ success: false, message: 'Internal server error.' });
   }
 };
 const deleteFavourite = async (req, res) => {
@@ -393,24 +389,24 @@ const deleteFavourite = async (req, res) => {
         return res.status(201).json({
           success: true,
           data: foundUser.favourite,
-          message: "Deleted from favourites successfully.",
+          message: 'Deleted from favourites successfully.',
         });
       } else {
         return res.status(201).json({
           success: false,
-          message: "Item does not exist in favourites.",
+          message: 'Item does not exist in favourites.',
         });
       }
     } else {
       return res
         .status(201)
-        .json({ success: false, message: "Station not found." });
+        .json({ success: false, message: 'Station not found.' });
     }
   } catch (error) {
-    console.error("Error:", error);
+    console.error('Error:', error);
     return res
       .status(201)
-      .json({ success: false, message: "Internal server error." });
+      .json({ success: false, message: 'Internal server error.' });
   }
 };
 const editNameAndProfileImg = async (req, res) => {
@@ -433,13 +429,13 @@ const editNameAndProfileImg = async (req, res) => {
     } else {
       return res
         .status(201)
-        .json({ success: false, message: "Station not found." });
+        .json({ success: false, message: 'Station not found.' });
     }
   } catch (error) {
-    console.error("Error:", error);
+    console.error('Error:', error);
     return res
       .status(201)
-      .json({ success: false, message: "Internal server error." });
+      .json({ success: false, message: 'Internal server error.' });
   }
 };
 const getFavouriteStations = async (req, res) => {
@@ -448,28 +444,29 @@ const getFavouriteStations = async (req, res) => {
 
     let stationListArray = [];
 
-    await Promise.all(stations.map(async (station) => {
-      const stationz = await stationModel.findOne({ placeId: station });
-      const gasStationLatitude = stationz.latlng.latitude;
-      const gasStationLongitude = stationz.latlng.longitude;
-      const distanceResponse = await axios.get(
-        `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${lat},${lng}&destinations=${gasStationLatitude},${gasStationLongitude}&key=${process.env.GOOGLE_API_KEY}`
-      );
-      const distance = distanceResponse.data.rows[0].elements[0].distance.text;
-      const stationObject = stationz.toObject();
-      stationObject.distanceFromUser = distance;
-      
-      stationListArray.push(stationObject);
-  }));
-  
-    
-    
+    await Promise.all(
+      stations.map(async (station) => {
+        const stationz = await stationModel.findOne({ placeId: station });
+        const gasStationLatitude = stationz.latlng.latitude;
+        const gasStationLongitude = stationz.latlng.longitude;
+        const distanceResponse = await axios.get(
+          `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${lat},${lng}&destinations=${gasStationLatitude},${gasStationLongitude}&key=${process.env.GOOGLE_API_KEY}`
+        );
+        const distance =
+          distanceResponse.data.rows[0].elements[0].distance.text;
+        const stationObject = stationz.toObject();
+        stationObject.distanceFromUser = distance;
+
+        stationListArray.push(stationObject);
+      })
+    );
+
     return res.status(201).json({ success: true, data: stationListArray });
   } catch (error) {
-    console.error("Error:", error);
+    console.error('Error:', error);
     return res
       .status(201)
-      .json({ success: false, message: "Internal server error." });
+      .json({ success: false, message: 'Internal server error.' });
   }
 };
 const purchaseGiftCard = async (req, res) => {
@@ -478,7 +475,7 @@ const purchaseGiftCard = async (req, res) => {
     const foundUser = await userModel.findOne({ email: req?.decodedEmail });
     const pointAmount = amount * 100;
 
-    const giftCardCode = "a1Qsnd7b912312wr343weeewwe";
+    const giftCardCode = 'a1Qsnd7b912312wr343weeewwe';
     if (foundUser) {
       let points = foundUser.points;
       if (points >= pointAmount) {
@@ -486,24 +483,25 @@ const purchaseGiftCard = async (req, res) => {
         foundUser.pointHistory.push({
           reason: `$${amount} ${giftCardType}`,
           isRedeem: true,
-          pointsAmount: -amount,
+          pointsAmount: -pointAmount,
+          pointsLeft: foundUser.points,
         });
         foundUser.save();
-        sendGiftCard(foundUser.email, "Gift card code", giftCardCode);
+        sendGiftCard(foundUser.email, 'Gift card code', giftCardCode);
         return res.status(201).json({
           success: true,
-          message: "Gift card code sent to your email",
+          message: 'Gift card code sent to your email',
         });
       } else {
         return res
           .status(201)
-          .json({ success: false, message: "Not enough points" });
+          .json({ success: false, message: 'Not enough points' });
       }
     }
   } catch (error) {
     return res
       .status(201)
-      .json({ success: false, message: "Internal server error." });
+      .json({ success: false, message: 'Internal server error.' });
   }
 };
 
@@ -521,23 +519,24 @@ const purchaseFrame = async (req, res) => {
           reason: `Frame purchased`,
           isRedeem: true,
           pointsAmount: pointAmount,
+          pointsLeft: foundUser.points,
         });
         foundUser.framesOwned.push(id);
         foundUser.save();
 
         return res
           .status(201)
-          .json({ success: true, message: "Purchased successfully" });
+          .json({ success: true, message: 'Purchased successfully' });
       } else {
         return res
           .status(201)
-          .json({ success: false, message: "Not enough points" });
+          .json({ success: false, message: 'Not enough points' });
       }
     }
   } catch (error) {
     return res
       .status(201)
-      .json({ success: false, message: "Internal server error." });
+      .json({ success: false, message: 'Internal server error.' });
   }
 };
 const purchaseAvatar = async (req, res) => {
@@ -549,27 +548,29 @@ const purchaseAvatar = async (req, res) => {
       let points = foundUser.points;
       if (points >= pointAmount) {
         foundUser.points = points - pointAmount;
+
         foundUser.pointHistory.push({
           reason: `Avatar purchased`,
           isRedeem: true,
           pointsAmount: pointAmount,
+          pointsLeft: foundUser.points,
         });
         foundUser.avatarOwned.push(id);
         foundUser.save();
 
         return res
           .status(201)
-          .json({ success: true, message: "Purchased successfully" });
+          .json({ success: true, message: 'Purchased successfully' });
       } else {
         return res
           .status(201)
-          .json({ success: false, message: "Not enough points" });
+          .json({ success: false, message: 'Not enough points' });
       }
     }
   } catch (error) {
     return res
       .status(201)
-      .json({ success: false, message: "Internal server error." });
+      .json({ success: false, message: 'Internal server error.' });
   }
 };
 
@@ -583,10 +584,10 @@ const changeFrame = async (req, res) => {
 
     return res.status(201).json({ success: true, data: foundUser.frame });
   } catch (error) {
-    console.error("Error:", error);
+    console.error('Error:', error);
     return res
       .status(201)
-      .json({ success: false, message: "Internal server error." });
+      .json({ success: false, message: 'Internal server error.' });
   }
 };
 
@@ -600,10 +601,10 @@ const changeAvatar = async (req, res) => {
 
     return res.status(201).json({ success: true, data: foundUser.profileImg });
   } catch (error) {
-    console.error("Error:", error);
+    console.error('Error:', error);
     return res
       .status(201)
-      .json({ success: false, message: "Internal server error." });
+      .json({ success: false, message: 'Internal server error.' });
   }
 };
 const getAllAvatar = async (req, res) => {
@@ -612,10 +613,10 @@ const getAllAvatar = async (req, res) => {
 
     return res.status(201).json({ success: true, data: allAvatar });
   } catch (error) {
-    console.error("Error:", error);
+    console.error('Error:', error);
     return res
       .status(201)
-      .json({ success: false, message: "Internal server error." });
+      .json({ success: false, message: 'Internal server error.' });
   }
 };
 const getAllFrame = async (req, res) => {
@@ -624,25 +625,23 @@ const getAllFrame = async (req, res) => {
 
     return res.status(201).json({ success: true, data: allFrame });
   } catch (error) {
-    console.error("Error:", error);
+    console.error('Error:', error);
     return res
       .status(201)
-      .json({ success: false, message: "Internal server error." });
+      .json({ success: false, message: 'Internal server error.' });
   }
 };
 
 const getFriendInvitationLink = async (req, res) => {
   try {
-   
-    const link =   Buffer.from(req?.decodedEmail).toString('base64');
+    const link = Buffer.from(req?.decodedEmail).toString('base64');
     return res.status(201).json({ success: true, data: link });
   } catch (error) {
     return res
       .status(201)
-      .json({ success: false, message: "Internal server error." });
+      .json({ success: false, message: 'Internal server error.' });
   }
 };
-
 
 const updateGasPrices = async (req, res) => {
   try {
@@ -659,7 +658,7 @@ const updateGasPrices = async (req, res) => {
     if (distanceInMeters > 200) {
       return res.status(201).json({
         success: false,
-        message: "Distance between you and station must be 200 meters or less",
+        message: 'Distance between you and station must be 200 meters or less',
       });
     }
     const recentEntry = foundStation.priceHistory
@@ -677,7 +676,7 @@ const updateGasPrices = async (req, res) => {
       const timeDifferenceInSeconds = Math.floor(
         (currentTimestamp - recentEntry.timeStamp) / 1000
       );
-      let timeDifference = "";
+      let timeDifference = '';
       if (timeDifferenceInSeconds < 60) {
         timeDifference = `${timeDifferenceInSeconds} sec`;
       } else if (timeDifferenceInSeconds < 3600) {
@@ -686,45 +685,46 @@ const updateGasPrices = async (req, res) => {
         timeDifference = `${Math.floor(timeDifferenceInSeconds / 3600)} hr`;
       }
 
-      return res
-        .status(201)
-        .json({ success: false, message: `You updated ${timeDifference} ago, you can only update once 24 hour` });
+      return res.status(201).json({
+        success: false,
+        message: `You updated ${timeDifference} ago, you can only update once 24 hour`,
+      });
     }
     let points = 0;
     if (diesel && diesel > 0) {
       foundStation.price.diesel.price = diesel;
       foundStation.price.diesel.email = req?.decodedEmail;
-      foundStation.price.diesel.name = foundUser.name
+      foundStation.price.diesel.name = foundUser.name;
       foundStation.price.diesel.timeStamp = currentTimestamp;
       points = points + 10;
     }
     if (regular && regular > 0) {
       foundStation.price.regular.price = regular;
       foundStation.price.regular.email = req?.decodedEmail;
-      foundStation.price.regular.name = foundUser.name
+      foundStation.price.regular.name = foundUser.name;
       foundStation.price.regular.timeStamp = currentTimestamp;
       points = points + 10;
     }
     if (midGrade && midGrade > 0) {
       foundStation.price.midGrade.price = midGrade;
       foundStation.price.midGrade.email = req?.decodedEmail;
-      foundStation.price.midGrade.name = foundUser.name
+      foundStation.price.midGrade.name = foundUser.name;
       foundStation.price.midGrade.timeStamp = currentTimestamp;
       points = points + 10;
     }
     if (premium && premium > 0) {
       foundStation.price.premium.price = premium;
       foundStation.price.premium.email = req?.decodedEmail;
-      foundStation.price.premium.name = foundUser.name
+      foundStation.price.premium.name = foundUser.name;
       foundStation.price.premium.timeStamp = currentTimestamp;
       points = points + 10;
     }
     if (points === 0) {
       return res
         .status(201)
-        .json({ success: false, message: "Please enter fuel prices" });
+        .json({ success: false, message: 'Please enter fuel prices' });
     }
-   
+
     foundStation.priceHistory.push({
       email: foundUser.email,
       name: foundUser.name,
@@ -740,11 +740,12 @@ const updateGasPrices = async (req, res) => {
       reason: `Price update`,
       isRedeem: false,
       pointsAmount: points,
+      pointsLeft: foundUser.points,
     });
-    foundUser.save()
+    foundUser.save();
     return res.status(201).json({
       success: true,
-      message: "Successfully updated",
+      message: 'Successfully updated',
       data: {
         price: foundStation.price,
         priceHistory: foundStation.priceHistory,
@@ -754,7 +755,7 @@ const updateGasPrices = async (req, res) => {
   } catch (error) {
     return res
       .status(201)
-      .json({ success: false, message: "Internal server error." });
+      .json({ success: false, message: 'Internal server error.' });
   }
 };
 
@@ -765,10 +766,10 @@ const addChat = async (req, res) => {
     const foundUser = await userModel.findOne({ email: req?.decodedEmail });
     if (isNewChat) {
       let recentmsg = message;
-      if (chatType === "video") {
-        recentmsg = "Video";
-      } else if (chatType === "image") {
-        recentmsg = "Image";
+      if (chatType === 'video') {
+        recentmsg = 'Video';
+      } else if (chatType === 'image') {
+        recentmsg = 'Image';
       }
       const newChat = new chatModel({
         user: req?.decodedEmail,
@@ -802,7 +803,7 @@ const addChat = async (req, res) => {
   } catch (error) {
     return res.status(201).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -837,7 +838,7 @@ function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
 }
 
 const transporter = nodemailer.createTransport({
-  service: "Gmail",
+  service: 'Gmail',
   port: 465,
   secure: true,
   auth: {
@@ -850,7 +851,7 @@ function sendGiftCard(toEmail, subject, code) {
     from: process.env.gmail,
     to: toEmail,
     subject: subject,
-    text: message,
+    text: code,
     html: ` <html>
         <head>
           <style>
@@ -899,9 +900,9 @@ function sendGiftCard(toEmail, subject, code) {
 
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
-      console.error("Error sending email:", error);
+      console.error('Error sending email:', error);
     } else {
-      console.log("Email sent:", info.response);
+      console.log('Email sent:', info.response);
     }
   });
 }
