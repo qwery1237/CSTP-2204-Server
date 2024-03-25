@@ -483,6 +483,7 @@ const purchaseGiftCard = async (req, res) => {
           reason: `$${amount} ${giftCardType}`,
           isRedeem: true,
           pointsAmount: amount,
+          pointsLeft: foundUser.points,
         });
         foundUser.save();
         sendGiftCard(foundUser.email, 'Gift card code', giftCardCode);
@@ -608,16 +609,14 @@ const getUserCommentInfo = async (req, res) => {
     const { email } = req.body;
     const foundUser = await userModel.findOne({ email: email });
 
-    return res
-      .status(201)
-      .json({
-        success: true,
-        data: {
-          avatar: foundUser.profileImg,
-          frame: foundUser.frame,
-          totalPoints: foundUser.totalPoints,
-        },
-      });
+    return res.status(201).json({
+      success: true,
+      data: {
+        avatar: foundUser.profileImg,
+        frame: foundUser.frame,
+        totalPoints: foundUser.totalPoints,
+      },
+    });
   } catch (error) {
     console.error('Error:', error);
     return res
@@ -703,12 +702,10 @@ const updateGasPrices = async (req, res) => {
         timeDifference = `${Math.floor(timeDifferenceInSeconds / 3600)} hr`;
       }
 
-      return res
-        .status(201)
-        .json({
-          success: false,
-          message: `You updated ${timeDifference} ago, you can only update once 24 hour`,
-        });
+      return res.status(201).json({
+        success: false,
+        message: `You updated ${timeDifference} ago, you can only update once 24 hour`,
+      });
     }
     let points = 0;
     if (diesel && diesel > 0) {
