@@ -22,6 +22,7 @@ import {
   addChat,
   getAllAvatar,
   getAllFrame,
+  getUserCommentInfo
 } from "../controller/user.js";
 import validateToken from "../middleware/verifyToken.js";
 const userRouter = express.Router();
@@ -48,4 +49,6 @@ userRouter.post("/unlikecomment", validateToken, unLikeComment);
 userRouter.post("/addchat", validateToken, addChat);
 userRouter.get("/getallavatar", validateToken, getAllAvatar);
 userRouter.get("/getallframe", validateToken, getAllFrame);
+userRouter.post("/getusercommentinfo", validateToken, getUserCommentInfo);
+
 export { userRouter };
