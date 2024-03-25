@@ -482,7 +482,7 @@ const purchaseGiftCard = async (req, res) => {
         foundUser.pointHistory.push({
           reason: `$${amount} ${giftCardType}`,
           isRedeem: true,
-          pointsAmount: amount,
+          pointsAmount: pointAmount,
           pointsLeft: foundUser.points,
         });
         foundUser.save();
