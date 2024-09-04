@@ -61,6 +61,14 @@ const addUserData = async (req, res) => {
         email: email,
         name: name,
         profileImg: profileImg,
+        points: 10000,
+        totalPoints: 10000,
+        pointHistory: {
+          isRedeem: false,
+          pointsAmount: 10000,
+          pointsLeft: 10000,
+          reason: 'Free points for a test',
+        },
       });
       await newUser.save();
       foundUser.isInitAuthComplete = true;
@@ -262,6 +270,14 @@ const Oauth = async (req, res) => {
         email: email,
         name: name,
         profileImg: picture,
+        points: 10000,
+        totalPoints: 10000,
+        pointHistory: {
+          isRedeem: false,
+          pointsAmount: 10000,
+          pointsLeft: 10000,
+          reason: 'Free points for a test',
+        },
       });
       await newUserM.save();
       if (invite) {
